@@ -4,27 +4,6 @@ import matplotlib.dates as dates
 import numpy as np
 import datetime 
 
-#implementation of queue, used for moving average calculations
-class Queue:
-    def __init__(self):
-        self.items = []
-
-    def isEmpty(self):
-        return self.items == []
-
-    def enqueue(self, item):
-        self.items.insert(0, item)
-
-    def dequeue(self):
-        self.items.pop()
-    
-    def size(self):
-        return len(self.items)
-
-    def mean(self):
-        return sum(self.items) / float(len(self.items))
-
-
 class MovingAverage:
     def __init__(self, numDays):
         self.numDays = numDays
@@ -46,35 +25,32 @@ class MovingAverage:
     def mean(self):
         return sum(self.priceQueue) / float(len(self.priceQueue))
 
-    def updateMA(self, iter, price):
+   
+    def updateMA(self, day, price):
         self.enqueue(price)
-        if iter >= self.numDays - 1:
+        if day >= self.numDays - 1:
             self.movingAverage.append(self.mean())
             self.dequeue()
-
-
-
-        
-
-day = []
-price = []
+      
+dayList = []
+priceList = []
 
 fiftyDayMA = MovingAverage(50)
 twoHundredDayMA = MovingAverage(200)
 
-
 with open ('prices.csv', 'rt') as csvfile:
     data = DictReader(csvfile)
-    n = 0
+    day = 0
     for row in data:
         dateString = row['Date']
-        day.append(datetime.datetime.strptime(dateString, "%Y-%m-%d"))   
-        price.append(float(row['Close']))
+        price = float(row['Close'])
+        dayList.append(datetime.datetime.strptime(dateString, "%Y-%m-%d"))   
+        priceList.append(price)
 
-        fiftyDayMA.updateMA(n, float(row['Close']))
-        twoHundredDayMA.updateMA(n, float(row['Close']))
+        fiftyDayMA.updateMA(day, price)
+        twoHundredDayMA.updateMA(day, price)
 
-        n += 1
+        day += 1
 
 
         
