@@ -25,7 +25,6 @@ class MovingAverage:
     def mean(self):
         return sum(self.priceQueue) / float(len(self.priceQueue))
 
-   
     def updateMA(self, day, price):
         self.enqueue(price)
         if day >= self.numDays - 1:
