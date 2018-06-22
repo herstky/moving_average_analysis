@@ -1,0 +1,1 @@
+The purpose of this script is to measure the effectiveness of different stock trading algorithms. It is intended to work with CSV files downloaded from yahoo finance. To change which data file is being analyzed, change the ticker variable in main.py.
