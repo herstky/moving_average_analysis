@@ -4,53 +4,52 @@ import matplotlib.dates as dates
 import numpy as np
 import datetime 
 
-#implementation of queue, used for moving average calculations
-class Queue:
-    def __init__(self):
-        self.items = []
+class MovingAverage:
+    def __init__(self, numDays):
+        self.numDays = numDays
+        self.priceQueue = []
+        self.movingAverage = []
 
     def isEmpty(self):
-        return self.items == []
+        return self.priceQueue == []
 
     def enqueue(self, item):
-        self.items.insert(0, item)
+        self.priceQueue.insert(0, item)
 
     def dequeue(self):
-        self.items.pop()
+        self.priceQueue.pop()
     
     def size(self):
-        return len(self.items)
+        return len(self.priceQueue)
 
     def mean(self):
-        return sum(self.items) / float(len(self.items))
+        return sum(self.priceQueue) / float(len(self.priceQueue))
 
-day = []
-price = []
+    def updateMA(self, day, price):
+        self.enqueue(price)
+        if day >= self.numDays - 1:
+            self.movingAverage.append(self.mean())
+            self.dequeue()
+      
+dayList = []
+priceList = []
 
-maPrice50 = []
-maPrice200 = []
-fiftyPriceQueue = Queue()
-twoHundredPriceQueue = Queue()
+fiftyDayMA = MovingAverage(50)
+twoHundredDayMA = MovingAverage(200)
 
 with open ('prices.csv', 'rt') as csvfile:
     data = DictReader(csvfile)
-    n = 0
+    day = 0
     for row in data:
         dateString = row['Date']
-        day.append(datetime.datetime.strptime(dateString, "%Y-%m-%d"))   
-        price.append(float(row['Close']))
-        fiftyPriceQueue.enqueue(float(row['Close']))
-        twoHundredPriceQueue.enqueue(float(row['Close']))
+        price = float(row['Close'])
+        dayList.append(datetime.datetime.strptime(dateString, "%Y-%m-%d"))   
+        priceList.append(price)
 
-        if n >= 49:
-            maPrice50.append(fiftyPriceQueue.mean()) 
-            fiftyPriceQueue.dequeue()
+        fiftyDayMA.updateMA(day, price)
+        twoHundredDayMA.updateMA(day, price)
 
-        if n >= 199:
-            maPrice200.append(twoHundredPriceQueue.mean())
-            twoHundredPriceQueue.dequeue()
-
-        n += 1
+        day += 1
 
 
         
