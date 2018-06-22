@@ -1,3 +1,4 @@
+from main import ticker
 from csv import DictReader
 import matplotlib
 import matplotlib.dates as dates
@@ -62,8 +63,8 @@ class BackTest:
                 self.bearishDates.append(row['Date'])    
                 if self.holding == True:
                     self.endPrice = price     
-                    self.percentChanges.append(np.round(100 * (self.startPrice - self.endPrice) / self.startPrice, 2))
-                    self.holding =False
+                    self.percentChanges.append(np.round(100 * (self.endPrice - self.startPrice) / self.startPrice, 2))
+                    self.holding = False
 
 
 dayList = []
@@ -71,7 +72,7 @@ priceList = []
 fiftyDayMA = MovingAverage(50)
 twoHundredDayMA = MovingAverage(200)
 test1 = BackTest()
-with open ('prices.csv', 'rt') as csvfile:
+with open ('data\\{}.csv'.format(ticker), 'rt') as csvfile:
     data = DictReader(csvfile)
     day = 0
     for row in data:
