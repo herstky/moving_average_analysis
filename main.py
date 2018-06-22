@@ -1,7 +1,7 @@
 from dataAnalysis import *
 import matplotlib.pyplot as plt
 
-ticker = "LULU"
+ticker = "SDRL"
 
 if __name__ == "__main__":
     plt.plot(dayList, priceList, label = "Prices")

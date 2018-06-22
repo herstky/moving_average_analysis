@@ -5,6 +5,11 @@ import matplotlib.dates as dates
 import numpy as np
 import datetime 
 
+#algorithm ideas:
+#buy when 50 day MA surpasses 200 day and sell on the converse seems to work well
+#-sell some percent after a certain period of time then sell rest after 200 day surpasses 50 day
+#-find peak by testing concavity and slope of 50 day MA
+
 
 class MovingAverage:
     def __init__(self, numDays):
@@ -33,6 +38,7 @@ class MovingAverage:
             self.movingAverage.append(self.mean())
             self.dequeue()
 
+#need to split out trade algorithms from this backtest class so that all algos can be tested with this class
 class BackTest:
     def __init__(self):
         self.bullishDates = []
