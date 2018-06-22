@@ -24,13 +24,44 @@ class Queue:
     def mean(self):
         return sum(self.items) / float(len(self.items))
 
+
+class MovingAverage:
+    def __init__(self, numDays):
+        self.numDays = numDays
+        self.priceQueue = []
+        self.movingAverage = []
+
+    def isEmpty(self):
+        return self.priceQueue == []
+
+    def enqueue(self, item):
+        self.priceQueue.insert(0, item)
+
+    def dequeue(self):
+        self.priceQueue.pop()
+    
+    def size(self):
+        return len(self.priceQueue)
+
+    def mean(self):
+        return sum(self.priceQueue) / float(len(self.priceQueue))
+
+    def updateMA(self, iter, price):
+        self.enqueue(price)
+        if iter >= self.numDays - 1:
+            self.movingAverage.append(self.mean())
+            self.dequeue()
+
+
+
+        
+
 day = []
 price = []
 
-maPrice50 = []
-maPrice200 = []
-fiftyPriceQueue = Queue()
-twoHundredPriceQueue = Queue()
+fiftyDayMA = MovingAverage(50)
+twoHundredDayMA = MovingAverage(200)
+
 
 with open ('prices.csv', 'rt') as csvfile:
     data = DictReader(csvfile)
@@ -39,16 +70,9 @@ with open ('prices.csv', 'rt') as csvfile:
         dateString = row['Date']
         day.append(datetime.datetime.strptime(dateString, "%Y-%m-%d"))   
         price.append(float(row['Close']))
-        fiftyPriceQueue.enqueue(float(row['Close']))
-        twoHundredPriceQueue.enqueue(float(row['Close']))
 
-        if n >= 49:
-            maPrice50.append(fiftyPriceQueue.mean()) 
-            fiftyPriceQueue.dequeue()
-
-        if n >= 199:
-            maPrice200.append(twoHundredPriceQueue.mean())
-            twoHundredPriceQueue.dequeue()
+        fiftyDayMA.updateMA(n, float(row['Close']))
+        twoHundredDayMA.updateMA(n, float(row['Close']))
 
         n += 1
 
