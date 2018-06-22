@@ -45,10 +45,10 @@ class BackTest:
         if MA2.numDays > MA1.numDays:
             self.smallMA = MA1
             self.bigMA = MA2
-    
         else:
             self.smallMA = MA2
             self.bigMA = MA1
+
         if day >= self.bigMA.numDays:
             self.curSmallMA = self.smallMA.movingAverage[day - self.smallMA.numDays]
             self.curBigMA = self.bigMA.movingAverage[day - self.bigMA.numDays]
@@ -58,7 +58,7 @@ class BackTest:
                 self.bullishDates.append(row['Date'])
                 self.startPrice = price
                 self.holding = True
-            
+                
             if self.curSmallMA < self.curBigMA and self.prevSmallMA > self.prevBigMa:
                 self.bearishDates.append(row['Date'])    
                 if self.holding == True:
@@ -76,17 +76,18 @@ with open ('data\\{}.csv'.format(ticker), 'rt') as csvfile:
     data = DictReader(csvfile)
     day = 0
     for row in data:
-        dateString = row['Date']
-        price = float(row['Close'])
-        dayList.append(datetime.datetime.strptime(dateString, "%Y-%m-%d"))   
-        priceList.append(price)
+        if row['Close'] != 'null':
+            dateString = row['Date']
+            price = float(row['Close'])
+            dayList.append(datetime.datetime.strptime(dateString, "%Y-%m-%d"))   
+            priceList.append(price)
 
-        fiftyDayMA.updateMA(day, price)
-        twoHundredDayMA.updateMA(day, price)
+            fiftyDayMA.updateMA(day, price)
+            twoHundredDayMA.updateMA(day, price)
 
-        test1.movingAverageintercept(day, price, fiftyDayMA, twoHundredDayMA) 
+            test1.movingAverageintercept(day, price, fiftyDayMA, twoHundredDayMA) 
 
-        day += 1
+            day += 1
 
 
         
