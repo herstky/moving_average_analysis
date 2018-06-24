@@ -32,16 +32,31 @@ class MovingAverage:
             self.movingAverage.append(self.mean())
             self.dequeue()
 
-#set up this class so that when conditions are met trades are executed in order to make it work with various algos
-class Backtest:
+#trade algorithm classes should inherit from this class
+class Trade:
     def __init__(self):
         self.bullishDates = []
         self.bearishDates = []
         self.tradeList = []
-        self.percentChanges = []
+        self.returns = []
         self.holding = False
 
-    def movingAverageintercept(self, day, price, MA1, MA2):
+    def buy(self, day, price):
+        self.startPrice = price
+        self.holding = True
+        self.bullishDates.append(row['Date'])
+    
+    #if percent < 100 holding should be True until all shares "held" are sold
+    #sum of percent should not exceed 100 
+    def sell(self, day, price, percent=100, holding=False):
+        self.bearishDates.append(row['Date'])    
+        if self.holding == True:   
+            self.returns.append(np.round(100 * (price - self.startPrice) / self.startPrice, 2))
+            self.holding = False
+
+
+class MAAlgorithm(Trade):
+    def movingAverageIntercept(self, day, price, MA1, MA2):
         if MA2.numDays > MA1.numDays:
             self.smallMA = MA1
             self.bigMA = MA2
@@ -55,23 +70,17 @@ class Backtest:
             self.prevSmallMA = self.smallMA.movingAverage[day - self.smallMA.numDays - 1]
             self.prevBigMa = self.bigMA.movingAverage[day - self.bigMA.numDays - 1]
             if self.curSmallMA > self.curBigMA and self.prevSmallMA < self.prevBigMa:
-                self.bullishDates.append(row['Date'])
-                self.startPrice = price
-                self.holding = True
+                self.buy(day, price)
                 
             if self.curSmallMA < self.curBigMA and self.prevSmallMA > self.prevBigMa:
-                self.bearishDates.append(row['Date'])    
-                if self.holding == True:
-                    self.endPrice = price     
-                    self.percentChanges.append(np.round(100 * (self.endPrice - self.startPrice) / self.startPrice, 2))
-                    self.holding = False
-
+                self.sell(day, price)
+    
 
 dayList = []
 priceList = []
 fiftyDayMA = MovingAverage(50)
 twoHundredDayMA = MovingAverage(200)
-test1 = Backtest()
+test1 = MAAlgorithm()
 with open ('data\\{}.csv'.format(ticker), 'rt') as csvfile:
     data = DictReader(csvfile)
     day = 0
@@ -85,7 +94,7 @@ with open ('data\\{}.csv'.format(ticker), 'rt') as csvfile:
             fiftyDayMA.updateMA(day, price)
             twoHundredDayMA.updateMA(day, price)
 
-            test1.movingAverageintercept(day, price, fiftyDayMA, twoHundredDayMA) 
+            test1.movingAverageIntercept(day, price, fiftyDayMA, twoHundredDayMA) 
 
             day += 1
 

@@ -10,9 +10,9 @@ if __name__ == "__main__":
 
     print('bullish: {}'.format(test1.bullishDates))
     print('bearish: {}'.format(test1.bearishDates))
-    print('percent changes: {}'.format(test1.percentChanges))
-    print('algorithm change: {}%'.format(np.round(np.sum(test1.percentChanges), 2)))
-    print('total change: {}%'.format(np.round(100 * (priceList[-1] - priceList[0]) / priceList[0], 2)))
+    print('returns: {}'.format(test1.returns))
+    print('algorithm return: {}%'.format(np.round(np.sum(test1.returns), 2)))
+    print('total return: {}%'.format(np.round(100 * (priceList[-1] - priceList[0]) / priceList[0], 2)))
 
 
     plt.legend()
