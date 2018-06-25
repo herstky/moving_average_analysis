@@ -56,7 +56,7 @@ class Trade:
 
 
 class MAAlgorithm(Trade):
-    def movingAverageIntercept(self, day, price, MA1, MA2):
+    def movingAverageIntersection(self, day, price, MA1, MA2):
         if MA2.numDays > MA1.numDays:
             self.smallMA = MA1
             self.bigMA = MA2
@@ -94,7 +94,7 @@ with open ('data\\{}.csv'.format(ticker), 'rt') as csvfile:
             fiftyDay.updateMA(day, price)
             twoHundredDay.updateMA(day, price)
 
-            test1.movingAverageIntercept(day, price, fiftyDay, twoHundredDay) 
+            test1.movingAverageIntersection(day, price, fiftyDay, twoHundredDay) 
 
             day += 1
 
