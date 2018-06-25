@@ -78,8 +78,8 @@ class MAAlgorithm(Trade):
 
 dayList = []
 priceList = []
-fiftyDayMA = MovingAverage(50)
-twoHundredDayMA = MovingAverage(200)
+fiftyDay = MovingAverage(50)
+twoHundredDay = MovingAverage(200)
 test1 = MAAlgorithm()
 with open ('data\\{}.csv'.format(ticker), 'rt') as csvfile:
     data = DictReader(csvfile)
@@ -91,10 +91,10 @@ with open ('data\\{}.csv'.format(ticker), 'rt') as csvfile:
             dayList.append(datetime.datetime.strptime(dateString, "%Y-%m-%d"))   
             priceList.append(price)
 
-            fiftyDayMA.updateMA(day, price)
-            twoHundredDayMA.updateMA(day, price)
+            fiftyDay.updateMA(day, price)
+            twoHundredDay.updateMA(day, price)
 
-            test1.movingAverageIntercept(day, price, fiftyDayMA, twoHundredDayMA) 
+            test1.movingAverageIntercept(day, price, fiftyDay, twoHundredDay) 
 
             day += 1
 
